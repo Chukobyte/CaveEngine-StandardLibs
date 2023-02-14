@@ -10,6 +10,8 @@
 #include "Containers/HashMap.h"
 #include "Containers/Exception.h"
 
+#include "se_hash_map.h"
+
 
 void testCaveHashMap() {
     std::cout << "[HASH MAP] Running tests...\n";
@@ -176,9 +178,10 @@ void testHashMapPerformance() {
 
     std::cout << " - (We'll be testing it with " << N << " elements.)\n";
 
-    printf("          | std::unordered_map |  cave::HashMap |\n");
+    printf("          | std::unordered_map |  cave::HashMap |  seika|\n");
     size_t dur1 = 0;
     size_t dur2 = 0;
+    size_t dur3 = 0;
 
     std::unordered_map<int, int> map1;
     cave::HashMap<int, int> map2;
@@ -243,7 +246,24 @@ void testHashMapPerformance() {
     end = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     dur2 = duration.count();
-    printf("Iterating | %15zu us | %11zu us |", dur1, dur2);
+    // seika test
+    // temp add
+    SEHashMap* map3 = se_hash_map_create(sizeof(int), sizeof(int), SE_HASH_MAP_MIN_CAPACITY);
+    for (int i = 0; i < N; i++) {
+        se_hash_map_add(map3, &i, &i);
+    }
+    start = std::chrono::high_resolution_clock::now();
+    int count3 = 0;
+    int iterCount3 = 0;
+    for (SEHashMapIterator iterator = se_hash_map_iter_create(map3); se_hash_map_iter_is_valid(map3, &iterator); se_hash_map_iter_advance(map3, &iterator)) {
+        count3 += *(int*) se_hash_map_get(map3, &iterCount3);
+        // iterCount3++;
+    }
+    end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    dur3 = duration.count();
+    se_hash_map_destroy(map3);
+    printf("Iterating | %15zu us | %11zu us | %11zu us |", dur1, dur2, dur3);
     if (dur1 < dur2){ printf(" BAD!"); }
     printf("\n");
 

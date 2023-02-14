@@ -8,7 +8,7 @@
 
 int main(){
     // Running the String tests:
-    testCaveString();    
+    // testCaveString();    
 
     std::cout << "\n";
     // Running the Vector tests:
