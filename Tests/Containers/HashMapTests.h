@@ -254,10 +254,8 @@ void testHashMapPerformance() {
     }
     start = std::chrono::high_resolution_clock::now();
     int count3 = 0;
-    int iterCount3 = 0;
     for (SEHashMapIterator iterator = se_hash_map_iter_create(map3); se_hash_map_iter_is_valid(map3, &iterator); se_hash_map_iter_advance(map3, &iterator)) {
-        count3 += *(int*) se_hash_map_get(map3, &iterCount3);
-        // iterCount3++;
+        count3 += *(int*)iterator.pair->value;
     }
     end = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
