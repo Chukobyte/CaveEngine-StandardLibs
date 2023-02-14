@@ -200,7 +200,11 @@ SEHashMapIterator se_hash_map_iter_create(SEHashMap* hashMap) {
         }
     }
     size_t iteratorCount = initialNode != NULL ? 1 : 0;
-    SEHashMapIterator iterator = { .count = iteratorCount, .end = hashMap->capacity, .index = initialIndex, .pair = initialNode };
+    SEHashMapIterator iterator;
+    iterator.count = iteratorCount;
+    iterator.end = hashMap->capacity;
+    iterator.index = initialIndex;
+    iterator.pair = initialNode;
     return iterator;
 }
 
