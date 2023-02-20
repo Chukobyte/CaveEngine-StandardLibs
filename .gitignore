@@ -33,3 +33,5 @@ Bin/
 *.exe
 *.out
 *.app
+
+.idea

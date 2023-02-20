@@ -185,6 +185,7 @@ void testHashMapPerformance() {
 
     std::unordered_map<int, int> map1;
     cave::HashMap<int, int> map2;
+    SEHashMap* map3 = se_hash_map_create(sizeof(int), sizeof(int), SE_HASH_MAP_MIN_CAPACITY);
     
     // Test adding performance
     auto start = std::chrono::high_resolution_clock::now();
@@ -202,7 +203,15 @@ void testHashMapPerformance() {
     end = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     dur2 = duration.count();
-    printf("   Adding | %15zu us | %11zu us |", dur1, dur2);
+    // Seika test
+    start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < N; i++) {
+        se_hash_map_add(map3, &i, &i);
+    }
+    end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    dur3 = duration.count();
+    printf("   Adding | %15zu us | %11zu us | %11zu us", dur1, dur2, dur3);
     if (dur1 < dur2){ printf(" BAD!"); }
     printf("\n");
 
@@ -223,7 +232,16 @@ void testHashMapPerformance() {
     end = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     dur2 = duration.count();
-    printf("R. Access | %15zu us | %11zu us |", dur1, dur2);
+
+    // seika test
+    start = std::chrono::high_resolution_clock::now();
+    for (int i = 0; i < N; i++) {
+        se_hash_map_get(map3, &i);
+    }
+    end = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    dur3 = duration.count();
+    printf("R. Access | %15zu us | %11zu us | %11zu us", dur1, dur2, dur3);
     if (dur1 < dur2){ printf(" BAD!"); }
     printf("\n");
 
@@ -247,11 +265,6 @@ void testHashMapPerformance() {
     duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     dur2 = duration.count();
     // seika test
-    // temp add
-    SEHashMap* map3 = se_hash_map_create(sizeof(int), sizeof(int), SE_HASH_MAP_MIN_CAPACITY);
-    for (int i = 0; i < N; i++) {
-        se_hash_map_add(map3, &i, &i);
-    }
     start = std::chrono::high_resolution_clock::now();
     int count3 = 0;
     for (SEHashMapIterator iterator = se_hash_map_iter_create(map3); se_hash_map_iter_is_valid(map3, &iterator); se_hash_map_iter_advance(map3, &iterator)) {
@@ -285,7 +298,17 @@ void testHashMapPerformance() {
     duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     dur2 = duration.count();
 
+    // seika test (TODO: Fix bug in hashmap)
+    // start = std::chrono::high_resolution_clock::now();
+    // for (int i = 0; i < N; i++) {
+    //     se_hash_map_erase(map3, &i);
+    // }
+    // end = std::chrono::high_resolution_clock::now();
+    // duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    // dur3 = duration.count();
+
     printf(" Removing | %15zu us | %11zu us |", dur1, dur2);
+    // printf(" Removing | %15zu us | %11zu us | %11zu us |", dur1, dur2, dur3);
     if (dur1 < dur2){ printf(" BAD!"); }
     printf("\n");
 }
